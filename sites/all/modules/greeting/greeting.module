@@ -1,0 +1,36 @@
+<?php
+
+// greeting menu function takes no arguments, first name is the same as module name
+function greeting_menu() {
+    $items = array();
+    // hello_friend defines the url where we can visit our module, also makes a menu item for us. The array holds the attributes needed to create and load the page
+    $items['hello_friend'] = array(
+            'title' => 'Hello friend!',
+            'page callback' => 'say_hello',
+            'access callback' => TRUE,
+            'type' => MENU_CALLBACK,
+    );
+    $items['goodbye'] = array(
+            'title' => 'Goodbye friend',
+            'page callback' => 'say_goodbye',
+            'access callback' => TRUE,
+            'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+// say_hello is the callback needed to run the page when the url is visited, and display the string below
+function say_hello() {
+    return '<p>Hello my dear friend!</p>';
+}
+
+function say_goodbye() {
+    return '<p>Goodbye dear friend!</p>';
+}
+
+function greeting_user_login() {
+    $_GET['destination'] = 'hello_friend';
+}
+
+function greeting_user_logout() {
+    $_GET['destination'] = 'goodbye';
+}

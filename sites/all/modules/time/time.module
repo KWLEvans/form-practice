@@ -1,0 +1,64 @@
+<?php
+function time_menu() {
+    $items = array();
+    $items['time'] = array(
+        'title' => t('Time'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('time_form'),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['atsa_time'] = array(
+        'title' => t('Atsa time!!'),
+        'page callback' => 'display_results',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function time_form() {
+    $form['time'] = array(
+        '#title' => t('Time:'),
+        '#type' => 'textfield',
+        '#description' => t('Enter any time at all, for reals though.'),
+        '#element_validate' => array('element_validate_time'),
+        '#required' => TRUE,
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Gimme Degrees!'),
+    );
+    return $form;
+}
+
+function time_form_submit($form, &$form_state) {
+    $time = $form_state['values']['time'];
+    $minute = substr($time, -2, 2);
+    $hour = substr($time, 0, 2);
+    $minute_degree = (int)$minute/60 * 360;
+    $hour = (int)$hour + (int)$minute/60;
+    $hour_degree = $hour/12 * 360;
+    if($hour_degree > 360) {
+        $hour_degree -= 360;
+    }
+    if ($hour_degree >= $minute_degree) {
+        $_SESSION['degrees'] = $hour_degree - $minute_degree;
+    } else {
+        $_SESSION['degrees'] = $minute_degree - $hour_degree;
+    }
+    $form_state['redirect'] = 'atsa_time';
+}
+
+function element_validate_time($element) {
+    preg_match('/^(\d{2}):(\d{2})$/', $element['#value'], $format, PREG_OFFSET_CAPTURE);
+    if (!$format) {
+        form_error($element, t('Please enter a time in 00:00 format. (Not military time)'));
+    } else if ($format[0][1] || $format[1][0] < 0 || $format[1][0] > 12 || $format[2][0] < 0 || $format[2][0] > 59) {
+        form_error($element, t('Please enter a time in 00:00 format. (Not military time)'));
+    }
+}
+
+function display_results() {
+    return t('Thats a ' . $_SESSION['degrees'] . ' degree difference!');
+}

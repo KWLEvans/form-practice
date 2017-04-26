@@ -1,0 +1,5 @@
+name = Time
+description = Gives info on clock hands.
+package = Essential Modules
+core = 7.x
+files[] = time.module
